@@ -15,9 +15,6 @@
     <description>LLM Workflow System</description>
     <properties>
         <java.version>17</java.version>
-        <sonar.projectKey>NguyenVuHoaBinh_prototype_8</sonar.projectKey>
-        <sonar.organization>NguyenVuHoaBinh</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <checkstyle.version>9.3</checkstyle.version>
         <pmd.version>6.55.0</pmd.version>
         <spotbugs.version>4.7.3</spotbugs.version>
