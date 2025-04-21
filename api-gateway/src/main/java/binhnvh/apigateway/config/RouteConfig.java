@@ -38,7 +38,7 @@ public class RouteConfig {
                                 .circuitBreaker(c -> c
                                         .setName("toolRegistryCircuitBreaker")
                                         .setFallbackUri("forward:/fallback/tool-registry")))
-                        .uri("http://localhost:8081"))  // Will be replaced with service discovery later
+                        .uri("lb://tool-registry-service"))  // Using service discovery
 
                 // Flow Registry Service Route
                 .route("flow-registry-service", r -> r
@@ -52,7 +52,7 @@ public class RouteConfig {
                                 .circuitBreaker(c -> c
                                         .setName("flowRegistryCircuitBreaker")
                                         .setFallbackUri("forward:/fallback/flow-registry")))
-                        .uri("http://localhost:8082"))  // Will be replaced with service discovery later
+                        .uri("lb://flow-registry-service"))  // Using service discovery
 
                 // Execution Engine Service Route
                 .route("execution-engine-service", r -> r
@@ -66,7 +66,7 @@ public class RouteConfig {
                                 .circuitBreaker(c -> c
                                         .setName("executionEngineCircuitBreaker")
                                         .setFallbackUri("forward:/fallback/execution-engine")))
-                        .uri("http://localhost:8083"))  // Will be replaced with service discovery later
+                        .uri("lb://execution-engine-service"))  // Using service discovery
 
                 // LLM Processing Service Route
                 .route("llm-processing-service", r -> r
@@ -80,7 +80,26 @@ public class RouteConfig {
                                 .circuitBreaker(c -> c
                                         .setName("llmProcessingCircuitBreaker")
                                         .setFallbackUri("forward:/fallback/llm-processor")))
-                        .uri("http://localhost:8084"))  // Will be replaced with service discovery later
+                        .uri("lb://llm-processing-service"))  // Using service discovery
+
+                // Add a route for the Config Server (useful for diagnostics)
+                .route("config-server", r -> r
+                        .path("/config/**")
+                        .filters(f -> f
+                                .rewritePath("/config/(?<segment>.*)", "/$1")
+                                .addRequestHeader("X-Gateway-Source", "api-gateway"))
+                        .uri("lb://config-server"))
+
+                // Add a route for Eureka Server dashboard access
+                .route("eureka-server", r -> r
+                        .path("/eureka/web")
+                        .filters(f -> f
+                                .rewritePath("/eureka/web", "/")
+                                .addRequestHeader("X-Gateway-Source", "api-gateway"))
+                        .uri("http://localhost:8761"))
+                .route("eureka-server-static", r -> r
+                        .path("/eureka/**")
+                        .uri("http://localhost:8761"))
 
                 .build();
     }

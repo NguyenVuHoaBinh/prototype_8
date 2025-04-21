@@ -23,7 +23,7 @@ spring:
       # Routes defined here will override the Java configuration
       routes:
         - id: tool-registry-service
-          uri: http://localhost:8081
+          uri: lb://tool-registry-service
           predicates:
             - Path=/api/tools/**
           filters:
@@ -40,7 +40,7 @@ spring:
                 fallbackUri: forward:/fallback/tool-registry
 
         - id: flow-registry-service
-          uri: http://localhost:8082
+          uri: lb://flow-registry-service
           predicates:
             - Path=/api/flows/**
           filters:
@@ -57,7 +57,7 @@ spring:
                 fallbackUri: forward:/fallback/flow-registry
 
         - id: execution-engine-service
-          uri: http://localhost:8083
+          uri: lb://execution-engine-service
           predicates:
             - Path=/api/executions/**
           filters:
@@ -74,7 +74,7 @@ spring:
                 fallbackUri: forward:/fallback/execution-engine
 
         - id: llm-processing-service
-          uri: http://localhost:8084
+          uri: lb://llm-processing-service
           predicates:
             - Path=/api/llm/**
           filters:
@@ -90,73 +90,14 @@ spring:
                 name: llmProcessingCircuitBreaker
                 fallbackUri: forward:/fallback/llm-processor
 
-  # Redis configuration - using simple rate limiter for dev
-  redis:
-    host: localhost
-    port: 6379
-
-  # Security configuration - simplified for development
-  security:
-    user:
-      name: admin
-      password: admin
-
-# Resilience4j - more permissive settings for development
-resilience4j:
-  circuitbreaker:
-    instances:
-      toolRegistryCircuitBreaker:
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 3
-        permittedNumberOfCallsInHalfOpenState: 5
-        waitDurationInOpenState: 5s
-        failureRateThreshold: 70
-      flowRegistryCircuitBreaker:
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 3
-        permittedNumberOfCallsInHalfOpenState: 5
-        waitDurationInOpenState: 5s
-        failureRateThreshold: 70
-      executionEngineCircuitBreaker:
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 3
-        permittedNumberOfCallsInHalfOpenState: 5
-        waitDurationInOpenState: 5s
-        failureRateThreshold: 70
-      llmProcessingCircuitBreaker:
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 3
-        permittedNumberOfCallsInHalfOpenState: 5
-        waitDurationInOpenState: 5s
-        failureRateThreshold: 70
-
-  timelimiter:
-    instances:
-      toolRegistryCircuitBreaker:
-        timeoutDuration: 10s
-      flowRegistryCircuitBreaker:
-        timeoutDuration: 10s
-      executionEngineCircuitBreaker:
-        timeoutDuration: 20s
-      llmProcessingCircuitBreaker:
-        timeoutDuration: 60s
-
-# Enhanced logging for development
-logging:
-  level:
-    root: INFO
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.http.server.reactive: DEBUG
-    org.springframework.web.reactive: DEBUG
-    reactor.netty: DEBUG
-    binhnvh.apigateway: DEBUG
-
-# Actuator - expose all endpoints in development
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:eureka@localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 10

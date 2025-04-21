@@ -1,0 +1,45 @@
+# Development environment configuration for Service Discovery
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10 # more frequent for development
+    lease-expiration-duration-in-seconds: 30 # shorter for development
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  server:
+    enable-self-preservation: false
+    wait-time-in-ms-when-sync-empty: 0
+    response-cache-update-interval-ms: 3000 # more frequent for development
+    eviction-interval-timer-in-ms: 10000 # more frequent for development
+
+# Expose all actuator endpoints for development
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# Security settings for development
+spring:
+  security:
+    user:
+      name: eureka
+      password: eureka # Simple password for development
+
+# Enhanced logging for development
+logging:
+  level:
+    root: INFO
+    com.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
