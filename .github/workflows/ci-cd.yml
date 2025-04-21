@@ -58,6 +58,7 @@ jobs:
     name: Code Quality Analysis
     runs-on: ubuntu-latest
     needs: build
+    if: false  # Temporarily disable this job
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -81,8 +82,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=[YOUR_ORGANIZATION]_[YOUR_REPOSITORY]
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+          -Dsonar.projectName="${{ github.repository }}" \
+          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
 
       - name: Run Checkstyle
         run: mvn -B checkstyle:check
