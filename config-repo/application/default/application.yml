@@ -1,0 +1,33 @@
+# Common configuration shared by all applications and environments
+spring:
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+  application:
+    resilience:
+          default-timeout: 5000
+          circuit-breaker:
+            failure-threshold: 50
+            recovery-timeout: 30000
+
+# Actuator endpoints configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN
+    binhnvh: INFO
+
+# Resilience configuration
