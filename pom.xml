@@ -20,6 +20,8 @@
     <modules>
         <module>config-server</module>
         <module>api-gateway</module>
+        <module>service-discovery</module>
+        <module>user-management</module>
     </modules>
 
     <properties>
