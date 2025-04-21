@@ -1,4 +1,4 @@
-package binhnvh.prototype_8;
+package binhnvh.prototype8;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

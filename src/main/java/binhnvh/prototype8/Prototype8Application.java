@@ -1,4 +1,4 @@
-package binhnvh.prototype_8;
+package binhnvh.prototype8;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
