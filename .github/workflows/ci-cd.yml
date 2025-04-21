@@ -58,7 +58,6 @@ jobs:
     name: Code Quality Analysis
     runs-on: ubuntu-latest
     needs: build
-    if: false  # Temporarily disable this job
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
