@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>binhnvh</groupId>
-    <artifactId>prototype_8</artifactId>
+    <artifactId>prototype8</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>prototype_8</name>
     <description>LLM Workflow System</description>
