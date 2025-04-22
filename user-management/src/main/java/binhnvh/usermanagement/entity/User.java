@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,15 +14,14 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Entity representing a user in the system.
- */
 @Entity
 @Table(name = "users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "roles")
+@EqualsAndHashCode(exclude = "roles")
 public class User {
 
     @Id
@@ -52,6 +53,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
     @CreationTimestamp
@@ -65,21 +67,13 @@ public class User {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
-    /**
-     * Add a role to the user.
-     *
-     * @param role the role to add
-     */
     public void addRole(Role role) {
         this.roles.add(role);
+        role.getUsers().add(this);
     }
 
-    /**
-     * Remove a role from the user.
-     *
-     * @param role the role to remove
-     */
     public void removeRole(Role role) {
         this.roles.remove(role);
+        role.getUsers().remove(this);
     }
 }

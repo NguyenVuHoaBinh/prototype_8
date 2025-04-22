@@ -119,4 +119,18 @@ public class FallbackController {
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(response));
     }
+
+    @GetMapping(value = "/user-management", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<Map<String, Object>>> userManagementFallback() {
+        logger.warn("Fallback triggered for User Management service");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "error");
+        response.put("message", "User Management service is temporarily unavailable");
+        response.put("suggestion", "Please try again later or contact support if the issue persists");
+
+        return Mono.just(ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(response));
+    }
 }

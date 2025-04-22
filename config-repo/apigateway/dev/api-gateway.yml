@@ -22,6 +22,25 @@ spring:
 
       # Routes defined here will override the Java configuration
       routes:
+        # User Management Service Routes
+        - id: user-management-service
+          uri: lb://user-management
+          predicates:
+            - Path=/api/auth/**,/api/users/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$1
+            - AddRequestHeader=X-Gateway-Source, api-gateway
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+                key-resolver: "#{@ipKeyResolver}"
+            - name: CircuitBreaker
+              args:
+                name: userManagementCircuitBreaker
+                fallbackUri: forward:/fallback/user-management
+
+        # Tool Registry Service Routes
         - id: tool-registry-service
           uri: lb://tool-registry-service
           predicates:
@@ -39,6 +58,7 @@ spring:
                 name: toolRegistryCircuitBreaker
                 fallbackUri: forward:/fallback/tool-registry
 
+        # Flow Registry Service Routes
         - id: flow-registry-service
           uri: lb://flow-registry-service
           predicates:
@@ -56,6 +76,7 @@ spring:
                 name: flowRegistryCircuitBreaker
                 fallbackUri: forward:/fallback/flow-registry
 
+        # Execution Engine Service Routes
         - id: execution-engine-service
           uri: lb://execution-engine-service
           predicates:
@@ -73,6 +94,7 @@ spring:
                 name: executionEngineCircuitBreaker
                 fallbackUri: forward:/fallback/execution-engine
 
+        # LLM Processing Service Routes
         - id: llm-processing-service
           uri: lb://llm-processing-service
           predicates:
@@ -89,6 +111,38 @@ spring:
               args:
                 name: llmProcessingCircuitBreaker
                 fallbackUri: forward:/fallback/llm-processor
+
+# Add circuit breaker configuration for User Management Service
+resilience4j:
+  circuitbreaker:
+    instances:
+      userManagementCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+      toolRegistryCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+      # Other circuit breakers remain unchanged...
+
+  timelimiter:
+    instances:
+      userManagementCircuitBreaker:
+        timeoutDuration: 5s
+      toolRegistryCircuitBreaker:
+        timeoutDuration: 5s
+      # Other time limiters remain unchanged...
 
 # Eureka Client Configuration
 eureka:

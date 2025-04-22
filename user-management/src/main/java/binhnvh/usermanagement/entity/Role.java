@@ -5,21 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
-import java.security.Permission;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Entity representing a role in the system.
- * Roles are used for authorization and access control.
- */
 @Entity
 @Table(name = "roles")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"permissions", "users"})
+@EqualsAndHashCode(exclude = {"permissions", "users"})
 public class Role {
 
     @Id
@@ -37,26 +36,20 @@ public class Role {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
+    @Builder.Default
     private Set<Permission> permissions = new HashSet<>();
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @Builder.Default
     private Set<User> users = new HashSet<>();
 
-    /**
-     * Add a permission to the role.
-     *
-     * @param permission the permission to add
-     */
     public void addPermission(Permission permission) {
         this.permissions.add(permission);
+        permission.getRoles().add(this);
     }
 
-    /**
-     * Remove a permission from the role.
-     *
-     * @param permission the permission to remove
-     */
     public void removePermission(Permission permission) {
         this.permissions.remove(permission);
+        permission.getRoles().remove(this);
     }
 }
