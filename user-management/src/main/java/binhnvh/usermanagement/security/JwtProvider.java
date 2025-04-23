@@ -38,7 +38,8 @@ public class JwtProvider {
 
     @PostConstruct
     public void init() {
-        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        // Generate a secure key with the proper size for HS512
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
 
     public String generateToken(Authentication authentication) {

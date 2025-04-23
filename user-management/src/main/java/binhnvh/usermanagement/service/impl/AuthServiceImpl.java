@@ -1,4 +1,4 @@
-package binhnvh.usermanagement.service;
+package binhnvh.usermanagement.service.impl;
 
 import binhnvh.usermanagement.dto.AuthRequest;
 import binhnvh.usermanagement.dto.AuthResponse;
@@ -10,6 +10,7 @@ import binhnvh.usermanagement.exception.UserAlreadyExistsException;
 import binhnvh.usermanagement.repository.RoleRepository;
 import binhnvh.usermanagement.repository.UserRepository;
 import binhnvh.usermanagement.security.JwtProvider;
+import binhnvh.usermanagement.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;

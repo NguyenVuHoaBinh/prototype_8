@@ -1,4 +1,4 @@
-package binhnvh.usermanagement.service;
+package binhnvh.usermanagement.service.impl;
 
 import binhnvh.usermanagement.dto.UserDto;
 import binhnvh.usermanagement.entity.Role;
@@ -7,6 +7,7 @@ import binhnvh.usermanagement.exception.ResourceNotFoundException;
 import binhnvh.usermanagement.exception.UserAlreadyExistsException;
 import binhnvh.usermanagement.repository.RoleRepository;
 import binhnvh.usermanagement.repository.UserRepository;
+import binhnvh.usermanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
